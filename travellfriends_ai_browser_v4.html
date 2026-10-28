@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030914">
+<title>TravellFriends — Il tuo amico di viaggio</title>
+<style>
+:root{--bg:#030914;--panel:#07172a;--line:#15385b;--text:#edf6ff;--muted:#9cb2d2;--blue:#168dff;--cyan:#22e8ff;--green:#19f5a6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 50% 44%,#052b4b 0,rgba(2,22,42,.55) 24%,transparent 57%),radial-gradient(ellipse at 50% 0%,#07152c 0,transparent 55%),var(--bg)}
+button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1160px,calc(100% - 34px));margin:auto}
+header{height:82px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid rgba(79,153,220,.09)}
+.brand{display:flex;align-items:center;gap:11px;color:var(--text);text-decoration:none;font-size:1.2rem;font-weight:800;letter-spacing:-.04em;white-space:nowrap}.brand-name span{color:var(--green)}
+.brand-orb{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#c8ffff 0 3%,#24dfff 10%,#147dff 35%,#0642a0 58%,#00f0bd 78%,#05214c 100%);box-shadow:0 0 16px #0daeffa6,inset -4px -5px 12px #061c69;position:relative;overflow:hidden}
+.brand-orb:after{content:"";position:absolute;inset:8px -5px;border:1px solid #a6ffffa6;border-radius:50%;transform:rotate(-35deg)}
+nav{display:flex;align-items:center;gap:25px}nav a{color:#a8bad5;text-decoration:none;font-size:.88rem;display:flex;gap:7px;align-items:center;transition:color .2s}nav a:hover,nav a.active{color:#fff}nav a.active{border-bottom:2px solid var(--green);padding:12px 0}
+.lang{border:1px solid #1b3c61;border-radius:999px;background:#071426;color:#e9f6ff;padding:9px 13px}
+main{text-align:center;padding:54px 0 28px}.eyebrow{color:#5ce8ff;text-transform:uppercase;letter-spacing:.19em;font-size:.72rem;font-weight:750}
+h1{font-size:clamp(2.05rem,4.6vw,3.5rem);letter-spacing:-.055em;line-height:1.12;margin:15px 0 8px}.gradient{background:linear-gradient(90deg,#35aaff,#29f5ce);color:transparent;background-clip:text;-webkit-background-clip:text}
+.subtitle{font-size:clamp(1rem,2.1vw,1.35rem);font-weight:550;margin:0;color:#dbeaff}.intro{max-width:590px;margin:23px auto 0;color:#a7bbd8;line-height:1.7;font-size:.98rem}
+.orb-stage{height:390px;display:grid;place-items:center;position:relative;margin:0 auto 4px;isolation:isolate}
+.orb-stage:before{content:"";position:absolute;width:min(480px,85vw);height:270px;left:50%;top:50%;transform:translate(-50%,-42%);background:radial-gradient(ellipse,#007cff2e 0,rgba(0,234,208,.11) 35%,transparent 72%);filter:blur(20px);z-index:-2}
+.orb{width:clamp(205px,27vw,310px);aspect-ratio:1;border-radius:50%;position:relative;isolation:isolate;background:radial-gradient(circle at 34% 24%,#b7ffff 0 1.2%,#4befff 3%,#1d9dff 13%,transparent 36%),radial-gradient(ellipse at 68% 72%,#05f7a9 0,#00c9c2 18%,transparent 43%),radial-gradient(ellipse at 32% 68%,#0758f7 0,#0b39b5 28%,transparent 60%),radial-gradient(circle at 52% 45%,#0a87fa 0,#0052ce 39%,#031a5a 69%,#03152f 78%);box-shadow:0 0 15px #1beaff,0 0 45px #008cffb8,0 0 100px #00c9ff5e,inset 7px 7px 20px #8affff75,inset -18px -17px 35px #03113f;animation:float 5.5s ease-in-out infinite}
+.orb:before{content:"";position:absolute;inset:3%;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 12%,#73fff2c9 17%,transparent 24% 41%,#19f7b9a8 48%,transparent 56% 72%,#6bbdffad 80%,transparent 87%);filter:blur(5px);mix-blend-mode:screen;animation:spin 11s linear infinite}
+.orb:after{content:"";position:absolute;inset:10% 7%;border-radius:50%;border:1px solid #9fffff91;transform:rotate(-32deg) scaleY(.48);box-shadow:0 0 18px #43ffff66,inset 0 0 18px #35caff38}
+.orb .ribbon{position:absolute;inset:18% -3%;border:2px solid #83fff68c;border-radius:50%;transform:rotate(48deg) scaleY(.46);filter:drop-shadow(0 0 7px #2ef6ff);z-index:1}
+.orb .ribbon.two{inset:15% -5%;transform:rotate(-48deg) scaleY(.46);border-color:#3bffbf8c}
+.orb-core{position:absolute;left:48%;top:46%;width:23%;height:23%;border-radius:50%;background:radial-gradient(circle,#c9ffff 0,#4afff0 18%,#00aaff66 46%,transparent 75%);filter:blur(7px);z-index:2}
+.orb-shadow{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);width:280px;height:36px;background:radial-gradient(ellipse,#00e7df5c 0,#0078ff30 36%,transparent 73%);filter:blur(9px)}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-9px) scale(1.015)}}@keyframes spin{to{transform:rotate(360deg)}}
+.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 auto 24px;max-width:1000px}
+.chip{display:flex;align-items:center;gap:10px;border:1px solid #17406c;border-radius:999px;background:rgba(5,18,38,.82);color:#d0e3ff;padding:11px 16px;font-size:.82rem;line-height:1.35;transition:.2s}.chip .ico{font-size:1.05rem;color:#51cfff}.chip:hover,.chip:focus-visible{border-color:#16e6d0;box-shadow:0 0 22px #00d9ff18;transform:translateY(-2px);outline:none}
+.chat-wrap{max-width:900px;margin:0 auto}.chatbox{display:flex;align-items:center;gap:12px;padding:8px 10px 8px 21px;border-radius:999px;background:linear-gradient(#08162b,#061326) padding-box,linear-gradient(100deg,#168dff,#00e8d0) border-box;border:1.5px solid transparent;box-shadow:0 0 25px #008dff22,0 0 55px #00e3cb13}
+.spark{color:#58d8ff;font-size:1.25rem}.chatbox input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:white;padding:13px 2px;font-size:.95rem}.chatbox input::placeholder{color:#829cbe}
+.send{width:48px;height:48px;border:0;border-radius:50%;color:#fff;font-size:1.15rem;background:linear-gradient(135deg,#10c5c4,#0bb875);box-shadow:0 0 18px #00e6b34d;transition:transform .2s}.send:hover{transform:scale(1.06)}
+.privacy{margin:15px 0 0;color:#819abb;font-size:.78rem}.privacy span{color:#67e7d2}
+.response{display:none;text-align:left;margin:17px auto 0;max-width:900px;padding:16px 18px;border-radius:17px;border:1px solid #17466b;background:#07182a;color:#d9eaff;line-height:1.6;font-size:.9rem}.response.show{display:block}.response strong{color:#59eadc}.response-message{white-space:pre-wrap}.ai-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.bottom{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:62px;padding:20px 0 26px;color:#6f8bb1;font-size:.78rem}.bottom a{color:#8ba9ce;text-decoration:none;margin-right:12px}.bottom a:hover{color:#fff}.flags{display:flex;gap:9px;align-items:center}
+@media(max-width:850px){nav{gap:13px}nav a{font-size:.8rem}.orb-stage{height:340px}}
+@media(max-width:650px){header{height:70px}.brand{font-size:1.05rem}.brand-orb{width:33px;height:33px}nav{display:none}main{padding-top:38px}.intro{font-size:.91rem;margin-top:18px}.orb-stage{height:300px}.orb{width:220px}.orb-shadow{bottom:22px;width:220px}.chip{font-size:.76rem;padding:10px 12px}.chatbox{padding-left:14px;gap:8px}.send{width:43px;height:43px}.bottom{align-items:flex-start;flex-direction:column;margin-top:40px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#" aria-label="TravellFriends home"><span class="brand-orb"></span><span class="brand-name">Travell<span>Friends</span></span></a>
+  <nav aria-label="Navigazione"><a class="active" href="#home" data-it="⌂ &nbsp; Home" data-en="⌂ &nbsp; Home">⌂ &nbsp; Home</a><a href="#chat" data-it="✈ &nbsp; Voli" data-en="✈ &nbsp; Flights">✈ &nbsp; Voli</a><a href="#chat" data-it="▱ &nbsp; Hotel" data-en="▱ &nbsp; Hotels">▱ &nbsp; Hotel</a><a href="#chat" data-it="⌖ &nbsp; Itinerari" data-en="⌖ &nbsp; Itineraries">⌖ &nbsp; Itinerari</a><a href="#chat" data-it="✧ &nbsp; Consigli" data-en="✧ &nbsp; Tips">✧ &nbsp; Consigli</a></nav>
+  <button class="lang" id="langBtn" aria-label="Cambia lingua">◎ &nbsp; IT⌄</button>
+</header>
+<main id="home">
+  <div class="eyebrow" data-it="IL TUO COMPAGNO DI VIAGGIO AI" data-en="YOUR AI TRAVEL COMPANION">IL TUO COMPAGNO DI VIAGGIO AI</div>
+  <h1 data-it-html="Ciao, sono <span class='gradient'>TravellFriends</span>" data-en-html="Hi, I'm <span class='gradient'>TravellFriends</span>">Ciao, sono <span class="gradient">TravellFriends</span></h1>
+  <p class="subtitle" data-it="Il tuo amico di viaggio, sempre con te." data-en="Your travel friend, always by your side.">Il tuo amico di viaggio, sempre con te.</p>
+  <p class="intro" data-it="Dimmi dove vuoi andare, cosa ti piace e il tuo budget.<br>Troveremo idee per voli, hotel, itinerari e tanto altro." data-en="Tell me where you want to go, what you love and your budget.<br>Let's explore flights, hotels, itineraries and more.">Dimmi dove vuoi andare, cosa ti piace e il tuo budget.<br>Troveremo idee per voli, hotel, itinerari e tanto altro.</p>
+  <div class="orb-stage" aria-label="Sfera luminosa blu e verde di TravellFriends">
+    <div class="orb" aria-hidden="true"><span class="ribbon"></span><span class="ribbon two"></span><span class="orb-core"></span></div><div class="orb-shadow" aria-hidden="true"></div>
+  </div>
+  <div class="suggestions">
+    <button class="chip" data-prompt="flight"><span class="ico">✈</span><span data-it="Trova voli economici<br>per New York" data-en="Find affordable flights<br>to New York">Trova voli economici<br>per New York</span></button>
+    <button class="chip" data-prompt="hotel"><span class="ico">▱</span><span data-it="Cerca hotel a<br>Barcellona" data-en="Find hotels in<br>Barcelona">Cerca hotel a<br>Barcellona</span></button>
+    <button class="chip" data-prompt="itinerary"><span class="ico">⌖</span><span data-it="Dammi un itinerario<br>di 7 giorni in Giappone" data-en="Plan a 7-day trip<br>to Japan">Dammi un itinerario<br>di 7 giorni in Giappone</span></button>
+    <button class="chip" data-prompt="tips"><span class="ico">♧</span><span data-it="Quali sono i migliori<br>consigli di viaggio?" data-en="What are the best<br>travel tips?">Quali sono i migliori<br>consigli di viaggio?</span></button>
+  </div>
+  <div class="chat-wrap" id="chat">
+    <form class="chatbox" id="chatForm">
+      <span class="spark" aria-hidden="true">✦</span>
+      <input id="chatInput" type="text" maxlength="600" autocomplete="off" aria-label="Scrivi la tua richiesta" data-it-placeholder="Scrivi qui la tua richiesta..." data-en-placeholder="Type your travel request..." placeholder="Scrivi qui la tua richiesta...">
+      <button class="send" type="submit" aria-label="Invia messaggio">➤</button>
+    </form>
+    <div class="response" id="response" aria-live="polite"></div>
+    <p class="privacy" data-it="♧ &nbsp; Sempre al tuo fianco, in ogni viaggio. <span>· Prototipo gratuito</span>" data-en="♧ &nbsp; By your side, wherever you go. <span>· Free prototype</span>">♧ &nbsp; Sempre al tuo fianco, in ogni viaggio. <span>· Prototipo gratuito</span></p>
+    <p id="aiStatus" class="privacy" role="status" style="margin-top:8px">✦ AI locale pronta da inizializzare · primo avvio con download del modello</p>
+  </div>
+</main>
+<footer class="bottom"><div><a href="#home" data-it="≈ &nbsp; Esplora" data-en="≈ &nbsp; Explore">≈ &nbsp; Esplora</a>· &nbsp;<a href="#chat" data-it="Scopri" data-en="Discover">Scopri</a>· &nbsp;<a href="#chat" data-it="Vivi" data-en="Experience">Vivi</a></div><div class="flags"><span>🇮🇹</span><span>🇬🇧</span><button class="lang" id="langBtnBottom">Italiano / English ↗</button></div></footer>
+</div>
+<script type="module">
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
+
+let language = "it";
+let generatorPromise = null;
+let modelReady = false;
+let busy = false;
+
+const statusEl = document.getElementById("aiStatus");
+const form = document.getElementById("chatForm");
+const input = document.getElementById("chatInput");
+const responseEl = document.getElementById("response");
+const sendBtn = form.querySelector(".send");
+
+env.allowLocalModels = false;
+env.useBrowserCache = true;
+
+const strings = {
+  it: {
+    loading: "⏳ Sto caricando l'AI nel browser. Al primo avvio serve scaricare il modello; attendi qualche minuto.",
+    ready: "✦ AI nel browser pronta · modello gratuito · nessuna chiave API",
+    error: "⚠️ Non sono riuscito ad avviare il modello su questo browser. Controlla la connessione, prova un browser aggiornato o usa i collegamenti di ricerca qui sotto.",
+    thinking: "✦ Sto pensando…",
+    empty: "Scrivi una richiesta o scegli uno dei suggerimenti qui sopra.",
+    fallback: "Posso aiutarti a organizzare il viaggio. Per darti un consiglio più utile, dimmi destinazione, date, budget e cosa ti piace fare. Puoi anche usare le ricerche esterne qui sotto.",
+    flight: "Per confrontare i voli servono città di partenza, destinazione, date e numero di viaggiatori.",
+    hotel: "Per cercare alloggi dimmi destinazione, date, numero di ospiti e budget per notte.",
+    itinerary: "Per costruire un itinerario dimmi destinazione, durata, interessi e ritmo preferito.",
+    tips: "Dimmi destinazione e tipo di viaggio per ricevere consigli più mirati.",
+    searchFlight: "Cerca voli sul web",
+    searchHotel: "Cerca hotel sul web",
+    searchItinerary: "Cerca itinerari sul web",
+    searchTips: "Cerca consigli e forum",
+    disclaimer: "L'AI può sbagliare e non verifica prezzi o disponibilità in tempo reale. I link aprono ricerche esterne: controlla sempre le informazioni sui siti originali."
+  },
+  en: {
+    loading: "⏳ Loading AI in your browser. The first launch downloads the model; please wait a few minutes.",
+    ready: "✦ Browser AI ready · free model · no API key",
+    error: "⚠️ I couldn't start the model in this browser. Check your connection, try an up-to-date browser, or use the search links below.",
+    thinking: "✦ Thinking…",
+    empty: "Type a request or choose one of the suggestions above.",
+    fallback: "I can help you plan a trip. Tell me your destination, dates, budget and interests so I can tailor the suggestions. You can also use the external search links below.",
+    flight: "To compare flights, I need your departure city, destination, dates and number of travelers.",
+    hotel: "To look for accommodation, tell me the destination, dates, number of guests and nightly budget.",
+    itinerary: "To plan an itinerary, tell me the destination, duration, interests and preferred pace.",
+    tips: "Tell me your destination and travel style for more tailored tips.",
+    searchFlight: "Search flights on the web",
+    searchHotel: "Search hotels on the web",
+    searchItinerary: "Search itineraries on the web",
+    searchTips: "Search tips and forums",
+    disclaimer: "AI can make mistakes and doesn't verify live prices or availability. Links open external searches: always check information on the original websites."
+  }
+};
+
+function toggleLanguage() {
+  language = language === "it" ? "en" : "it";
+  document.documentElement.lang = language;
+  document.querySelectorAll("[data-it][data-en]").forEach(el => { el.innerHTML = el.dataset[language]; });
+  document.querySelectorAll("[data-it-html][data-en-html]").forEach(el => { el.innerHTML = el.dataset[language + "Html"]; });
+  input.placeholder = input.dataset[language + "Placeholder"];
+  input.setAttribute("aria-label", language === "it" ? "Scrivi la tua richiesta" : "Type your travel request");
+  document.getElementById("langBtn").textContent = language === "it" ? "◎  IT⌄" : "◎  EN⌄";
+  document.getElementById("langBtnBottom").textContent = language === "it" ? "Italiano / English ↗" : "English / Italiano ↗";
+  if (modelReady) statusEl.textContent = strings[language].ready;
+  responseEl.classList.remove("show");
+}
+document.getElementById("langBtn").addEventListener("click", toggleLanguage);
+document.getElementById("langBtnBottom").addEventListener("click", toggleLanguage);
+
+function classify(text) {
+  const s = text.toLowerCase();
+  if (/vol|flight|aereo|plane|bigliett/.test(s)) return "flight";
+  if (/hotel|albergo|allogg|hostel|dormire|accommodation/.test(s)) return "hotel";
+  if (/itiner|giorni|cosa vedere|visit|itinerary|plan|programma/.test(s)) return "itinerary";
+  if (/consigli|tips|advice|forum|sicuro|sicurezza/.test(s)) return "tips";
+  return "general";
+}
+
+function searchUrl(kind, text) {
+  const q = encodeURIComponent(text);
+  if (kind === "flight") return "https://www.google.com/travel/flights?q=" + q;
+  if (kind === "hotel") return "https://www.booking.com/searchresults.html?ss=" + q;
+  const suffix = kind === "itinerary" ? " itinerary travel guide" : " travel tips forum reviews";
+  return "https://www.google.com/search?q=" + q + encodeURIComponent(suffix);
+}
+
+function renderResponse(text, kind, originalPrompt) {
+  responseEl.replaceChildren();
+  const msg = document.createElement("div");
+  msg.className = "response-message";
+  msg.textContent = text;
+  responseEl.appendChild(msg);
+
+  const actions = document.createElement("div");
+  actions.className = "ai-actions";
+  const link = document.createElement("a");
+  link.href = searchUrl(kind, originalPrompt);
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = strings[language][kind === "flight" ? "searchFlight" : kind === "hotel" ? "searchHotel" : kind === "itinerary" ? "searchItinerary" : "searchTips"];
+  link.style.cssText = "display:inline-block;padding:10px 14px;border:1px solid rgba(87,220,222,.45);border-radius:12px;color:#bafcff;text-decoration:none;background:rgba(42,110,130,.14);font-size:13px";
+  actions.appendChild(link);
+  responseEl.appendChild(actions);
+
+  const note = document.createElement("p");
+  note.textContent = strings[language].disclaimer;
+  note.style.cssText = "font-size:12px;opacity:.72;margin-top:12px";
+  responseEl.appendChild(note);
+  responseEl.classList.add("show");
+  responseEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function getGenerator() {
+  if (!generatorPromise) {
+    statusEl.textContent = strings[language].loading;
+    generatorPromise = pipeline("text2text-generation", "Xenova/LaMini-Flan-T5-248M", {
+      quantized: true
+    }).then(generator => {
+      modelReady = true;
+      statusEl.textContent = strings[language].ready;
+      return generator;
+    }).catch(err => {
+      generatorPromise = null;
+      statusEl.textContent = strings[language].error;
+      throw err;
+    });
+  }
+  return generatorPromise;
+}
+
+async function submitPrompt(prompt) {
+  if (busy) return;
+  const text = prompt.trim();
+  if (!text) { input.focus(); return; }
+  busy = true;
+  sendBtn.disabled = true;
+  sendBtn.style.opacity = ".6";
+  responseEl.replaceChildren();
+  const waiting = document.createElement("div");
+  waiting.textContent = strings[language].loading;
+  responseEl.appendChild(waiting);
+  responseEl.classList.add("show");
+
+  const kind = classify(text);
+  const lang = language;
+  let answer = "";
+  try {
+    const generator = await getGenerator();
+    statusEl.textContent = strings[language].thinking;
+    const instruction = lang === "it"
+      ? `Sei TravellFriends, un assistente amichevole per viaggi. Rispondi in italiano in modo utile, concreto e breve. Non inventare prezzi, disponibilità o fonti aggiornate. Se mancano informazioni, fai fino a tre domande pertinenti. Richiesta dell'utente: ${text}`
+      : `You are TravellFriends, a friendly travel assistant. Reply in English, helpfully and concisely. Do not invent prices, availability or current sources. If information is missing, ask up to three relevant questions. User request: ${text}`;
+    const result = await generator(instruction, { max_new_tokens: 160, do_sample: false });
+    answer = (result?.[0]?.generated_text || "").trim();
+    if (!answer || answer.length < 8) answer = strings[lang][kind] || strings[lang].fallback;
+    statusEl.textContent = strings[language].ready;
+  } catch (err) {
+    answer = strings[lang][kind] || strings[lang].fallback;
+  }
+  renderResponse(answer, kind, text);
+  busy = false;
+  sendBtn.disabled = false;
+  sendBtn.style.opacity = "1";
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  const value = input.value.trim();
+  if (!value) { input.focus(); return; }
+  input.value = "";
+  submitPrompt(value);
+});
+
+document.querySelectorAll("[data-prompt]").forEach(button => {
+  button.addEventListener("click", () => {
+    const kind = button.dataset.prompt;
+    const examples = {
+      flight: language === "it" ? "Aiutami a trovare voli economici per New York. Quali informazioni ti servono?" : "Help me find affordable flights to New York. What information do you need?",
+      hotel: language === "it" ? "Aiutami a trovare un hotel a Barcellona con un buon rapporto qualità-prezzo." : "Help me find a good-value hotel in Barcelona.",
+      itinerary: language === "it" ? "Creami un itinerario di 7 giorni in Giappone." : "Create a 7-day itinerary in Japan.",
+      tips: language === "it" ? "Dammi consigli utili per organizzare un viaggio e risparmiare." : "Give me useful tips to plan a trip and save money."
+    };
+    input.value = examples[kind] || "";
+    input.focus();
+    document.getElementById("chat").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+});
+</script>
+</body>
+</html>
