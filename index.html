@@ -76,7 +76,6 @@ h1{font-size:clamp(2.05rem,4.6vw,3.5rem);letter-spacing:-.055em;line-height:1.12
 <footer class="bottom"><div><a href="#home" data-it="≈ &nbsp; Esplora" data-en="≈ &nbsp; Explore">≈ &nbsp; Esplora</a>· &nbsp;<a href="#chat" data-it="Scopri" data-en="Discover">Scopri</a>· &nbsp;<a href="#chat" data-it="Vivi" data-en="Experience">Vivi</a></div><div class="flags"><span>🇮🇹</span><span>🇬🇧</span><button class="lang" id="langBtnBottom">Italiano / English ↗</button></div></footer>
 </div>
 <script type="module">
-import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
 
 let language = "it";
 let generatorPromise = null;
@@ -89,8 +88,6 @@ const input = document.getElementById("chatInput");
 const responseEl = document.getElementById("response");
 const sendBtn = form.querySelector(".send");
 
-env.allowLocalModels = false;
-env.useBrowserCache = true;
 
 const strings = {
   it: {
@@ -187,58 +184,84 @@ function renderResponse(text, kind, originalPrompt) {
   responseEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-async function getGenerator() {
-  if (!generatorPromise) {
-    statusEl.textContent = strings[language].loading;
-    generatorPromise = pipeline("text2text-generation", "Xenova/LaMini-Flan-T5-248M", {
-      quantized: true
-    }).then(generator => {
-      modelReady = true;
-      statusEl.textContent = strings[language].ready;
-      return generator;
-    }).catch(err => {
-      generatorPromise = null;
-      statusEl.textContent = strings[language].error;
-      throw err;
-    });
-  }
-  return generatorPromise;
-}
+
 
 async function submitPrompt(prompt) {
   if (busy) return;
+
   const text = prompt.trim();
-  if (!text) { input.focus(); return; }
+  if (!text) {
+    input.focus();
+    return;
+  }
+
   busy = true;
   sendBtn.disabled = true;
   sendBtn.style.opacity = ".6";
   responseEl.replaceChildren();
+
   const waiting = document.createElement("div");
-  waiting.textContent = strings[language].loading;
+  waiting.textContent = language === "it"
+    ? "✦ TravellFriends sta pensando…"
+    : "✦ TravellFriends is thinking…";
+
   responseEl.appendChild(waiting);
   responseEl.classList.add("show");
 
   const kind = classify(text);
   const lang = language;
-  let answer = "";
+
   try {
-    const generator = await getGenerator();
-    statusEl.textContent = strings[language].thinking;
-    const instruction = lang === "it"
-      ? `Sei TravellFriends, un assistente amichevole per viaggi. Rispondi in italiano in modo utile, concreto e breve. Non inventare prezzi, disponibilità o fonti aggiornate. Se mancano informazioni, fai fino a tre domande pertinenti. Richiesta dell'utente: ${text}`
-      : `You are TravellFriends, a friendly travel assistant. Reply in English, helpfully and concisely. Do not invent prices, availability or current sources. If information is missing, ask up to three relevant questions. User request: ${text}`;
-    const result = await generator(instruction, { max_new_tokens: 160, do_sample: false });
-    answer = (result?.[0]?.generated_text || "").trim();
-    if (!answer || answer.length < 8) answer = strings[lang][kind] || strings[lang].fallback;
-    statusEl.textContent = strings[language].ready;
+    statusEl.textContent = lang === "it"
+      ? "✦ Connessione all'assistente AI…"
+      : "✦ Connecting to the AI assistant…";
+
+    const res = await fetch(
+      "https://travellfriends-ai.padula591.workers.dev/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.reply) {
+      throw new Error(
+        data.details || data.error || `Errore HTTP ${res.status}`
+      );
+    }
+
+    renderResponse(data.reply, kind, text);
+
+    statusEl.textContent = lang === "it"
+      ? "✦ Assistente AI connesso"
+      : "✦ AI assistant connected";
+
   } catch (err) {
-    answer = strings[lang][kind] || strings[lang].fallback;
+    renderResponse(
+      (lang === "it"
+        ? "Non riesco a collegarmi all'assistente AI. "
+        : "I couldn't connect to the AI assistant. ") +
+      (err.message || ""),
+      kind,
+      text
+    );
+
+    statusEl.textContent = lang === "it"
+      ? "⚠️ Connessione AI non riuscita"
+      : "⚠️ AI connection failed";
+
+  } finally {
+    busy = false;
+    sendBtn.disabled = false;
+    sendBtn.style.opacity = "1";
   }
-  renderResponse(answer, kind, text);
-  busy = false;
-  sendBtn.disabled = false;
-  sendBtn.style.opacity = "1";
 }
+
 
 form.addEventListener("submit", event => {
   event.preventDefault();
