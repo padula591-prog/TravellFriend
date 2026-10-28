@@ -140,13 +140,136 @@ function toggleLanguage() {
 document.getElementById("langBtn").addEventListener("click", toggleLanguage);
 document.getElementById("langBtnBottom").addEventListener("click", toggleLanguage);
 
-function classify(text) {
+
+let flightSearch = {
+  active: false,
+  step: 0,
+  from: "",
+  to: "",
+  dates: "",
+  budget: ""
+};
+
+  function classify(text) {
   const s = text.toLowerCase();
   if (/vol|flight|aereo|plane|bigliett/.test(s)) return "flight";
   if (/hotel|albergo|allogg|hostel|dormire|accommodation/.test(s)) return "hotel";
   if (/itiner|giorni|cosa vedere|visit|itinerary|plan|programma/.test(s)) return "itinerary";
   if (/consigli|tips|advice|forum|sicuro|sicurezza/.test(s)) return "tips";
   return "general";
+}
+
+function handleFlightSearch(text) {
+  const value = text.trim();
+
+  if (!flightSearch.active) {
+    if (!/\b(volo|voli|volare|volo aereo|flight|flights|aereo|aerei|biglietto aereo|biglietti aerei)\b/i.test(value)) {
+      return false;
+    }
+
+    flightSearch = {
+      active: true,
+      step: 1,
+      from: "",
+      to: "",
+      dates: "",
+      budget: ""
+    };
+
+    renderResponse(
+      language === "it"
+        ? "✈️ Organizziamo il tuo viaggio! Da quale città vuoi partire?"
+        : "✈️ Let's plan your trip! Which city will you depart from?",
+      "flight",
+      value
+    );
+    return true;
+  }
+
+  if (flightSearch.step === 1) {
+    flightSearch.from = value;
+    flightSearch.step = 2;
+    renderResponse(
+      language === "it"
+        ? "🌍 Dove vuoi andare?"
+        : "🌍 Where would you like to go?",
+      "flight",
+      value
+    );
+    return true;
+  }
+
+  if (flightSearch.step === 2) {
+    flightSearch.to = value;
+    flightSearch.step = 3;
+    renderResponse(
+      language === "it"
+        ? "📅 In quali date vuoi viaggiare? Scrivi anche solo le date di andata e ritorno."
+        : "📅 When would you like to travel? Enter your departure and return dates.",
+      "flight",
+      value
+    );
+    return true;
+  }
+
+  if (flightSearch.step === 3) {
+    flightSearch.dates = value;
+    flightSearch.step = 4;
+    renderResponse(
+      language === "it"
+        ? "💶 Qual è il tuo budget indicativo per il volo?"
+        : "💶 What is your approximate flight budget?",
+      "flight",
+      value
+    );
+    return true;
+  }
+
+  if (flightSearch.step === 4) {
+    flightSearch.budget = value;
+
+    const query = encodeURIComponent(
+      flightSearch.from + " " +
+      flightSearch.to + " " +
+      flightSearch.dates + " budget " +
+      flightSearch.budget
+    );
+
+    const url = "https://www.google.com/travel/flights?q=" + query;
+
+    flightSearch.active = false;
+    flightSearch.step = 0;
+
+    renderResponse(
+      language === "it"
+        ? "✈️ Ecco la tua ricerca! Ho preparato il collegamento con partenza da " +
+          flightSearch.from + ", destinazione " + flightSearch.to +
+          ", date " + flightSearch.dates + " e budget " +
+          flightSearch.budget + ". Apri Google Flights per verificare le opzioni e i prezzi aggiornati."
+        : "✈️ Your search is ready! From " + flightSearch.from +
+          " to " + flightSearch.to + ", dates " + flightSearch.dates +
+          ", budget " + flightSearch.budget +
+          ". Open Google Flights to check current options and prices.",
+      "flight",
+      value
+    );
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = language === "it"
+      ? "🔎 Cerca voli su Google Flights"
+      : "🔎 Search flights on Google Flights";
+    link.style.display = "inline-block";
+    link.style.marginTop = "12px";
+    link.style.color = "#55e6c1";
+    responseEl.appendChild(link);
+
+    return true;
+  }
+
+  return false;
 }
 
 function searchUrl(kind, text) {
@@ -191,6 +314,10 @@ async function submitPrompt(prompt) {
   const text = prompt.trim();
   if (!text) {
     input.focus();
+    return;
+  }
+
+  if (handleFlightSearch(text)) {
     return;
   }
 
